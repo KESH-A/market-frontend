@@ -2,21 +2,21 @@ import React from 'react';
 import { Search, X } from 'lucide-react';
 import ProductCard from './ProductCard';
 
-export default function ProductGrid({
-  theme, filteredProducts, selectedCategory, searchQuery,
+function ProductGrid({
+  theme, filteredProducts, selectedCategoryName, searchQuery,
   onClearCategory, onClearSearch, onResetFilters,
-  getProductSize, likedProducts, openSizeMenuId, getCurrentImage,
-  onToggleLike, onSelectSize, onToggleSizeMenu, onQuickView, onAddToCart,
+  likedProducts, getCurrentImage,
+  onToggleLike, onQuickView, onAddToCart,
   onPrevImage, onNextImage, formatPrice, getDiscount
 }) {
   return (
     <main className="pt-24 md:pt-48 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto relative z-10">
-      {(selectedCategory !== "All" || searchQuery !== "") && (
+      {(selectedCategoryName || searchQuery !== "") && (
         <div className="flex flex-wrap items-center justify-center gap-2 mb-6 w-full">
           <span className={`text-xs font-semibold ${theme.textMuted}`}>Filters:</span>
-          {selectedCategory !== "All" && (
+          {selectedCategoryName && (
             <span className="inline-flex items-center gap-1.5 text-xs bg-lime-200 text-lime-900 px-3 py-1 rounded-full font-medium shadow-sm">
-              {selectedCategory}
+              {selectedCategoryName}
               <X size={12} className="cursor-pointer hover:opacity-75 active:scale-90 transition-transform duration-150" onClick={onClearCategory} />
             </span>
           )}
@@ -41,24 +41,19 @@ export default function ProductGrid({
           </div>
         ) : (
           filteredProducts.map((product) => {
-            const size = getProductSize(product);
             const liked = !!likedProducts[product.id];
             return (
               <ProductCard
                 key={product.id}
                 product={product}
                 theme={theme}
-                size={size}
                 liked={liked}
-                isSizeMenuOpen={openSizeMenuId === product.id}
                 currentImage={getCurrentImage(product)}
                 discount={getDiscount(product)}
                 formatPrice={formatPrice}
                 onToggleLike={() => onToggleLike(product.id)}
-                onSelectSize={(s) => onSelectSize(product.id, s)}
-                onToggleSizeMenu={() => onToggleSizeMenu(product.id)}
                 onQuickView={() => onQuickView(product)}
-                onAddToCart={() => onAddToCart(product, size)}
+                onAddToCart={() => onAddToCart(product)}
                 onPrevImage={(e) => onPrevImage(product.id, product.images.length, e)}
                 onNextImage={(e) => onNextImage(product.id, product.images.length, e)}
               />
@@ -69,3 +64,5 @@ export default function ProductGrid({
     </main>
   );
 }
+
+export default React.memo(ProductGrid);

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Search, X } from 'lucide-react';
 
-export default function SearchPanel({ variant, theme, searchQuery, onChange, isOpen, onClose }) {
+function SearchPanel({ variant, theme, searchQuery, onChange, isOpen, onClose }) {
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
       e.preventDefault();
@@ -49,3 +49,5 @@ export default function SearchPanel({ variant, theme, searchQuery, onChange, isO
     </div>
   );
 }
+
+export default React.memo(SearchPanel);

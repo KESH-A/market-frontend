@@ -1,7 +1,7 @@
 import React from 'react';
 import { X, CheckCircle } from 'lucide-react';
 
-export default function CheckoutModal({
+function CheckoutModal({
   theme, isOpen, step, onClose,
   cartSubtotal, shippingFee, taxAmount, orderTotal, formatPrice,
   couponCode, onCouponChange, couponError, onApplyCoupon,
@@ -64,3 +64,5 @@ export default function CheckoutModal({
     </div>
   );
 }
+
+export default React.memo(CheckoutModal);

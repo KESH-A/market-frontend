@@ -77,7 +77,7 @@ function ProductCard({
           {product.inStock ? (
             <button
               onClick={onAddToCart}
-              className={`flex-1 min-w-0 rounded-2xl flex items-center justify-center gap-1 text-sm font-medium active:scale-95 transition-all duration-300 shadow-lg px-2 ${theme.primaryBtn}`}
+              className={`flex-1 min-w-0 h-10 rounded-2xl flex items-center justify-center gap-1 text-sm font-medium active:scale-95 transition-all duration-300 shadow-lg px-2 ${theme.primaryBtn}`}
             >
               + Add to Cart
             </button>
