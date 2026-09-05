@@ -27,7 +27,7 @@ const loadFromStorage = (key, fallback) => {
 
 export default function App() {
   const [productsData, setProductsData] = useState([]);
-  const [categories, setCategories] = useState(initialCategories);
+  // const [categories, setCategories] = useState(initialCategories);
   const [isLoading, setIsLoading] = useState(true);
 
   const [activeMenu, setActiveMenu] = useState(null);
@@ -56,32 +56,47 @@ export default function App() {
 
   const [cartItems, setCartItems] = useState(() => loadFromStorage('nexus_cart', [{ ...sampleProduct, quantity: 1, selectedSize: "M" }]));
 
+const [categories, setCategories] = useState(["All"]);
+
 useEffect(() => {
   const fetchData = async () => {
     setIsLoading(true);
     const startTime = Date.now();
 
-    const [fetchedProducts, fetchedCategories] = await Promise.all([
-      getProducts(),
-      getCategories()
-    ]);
+    try {
+      const [productsRes, categoriesRes] = await Promise.all([
+        getProducts(),
+        getCategories()
+      ]);
 
-    if (fetchedProducts && fetchedProducts.length > 0) {
-      setProductsData(fetchedProducts);
+      if (productsRes) {
+        const productsArray = Array.isArray(productsRes)
+          ? productsRes
+          : (productsRes.results || []);
+
+        setProductsData(productsArray);
+      }
+
+      if (categoriesRes) {
+        const rawList = Array.isArray(categoriesRes)
+          ? categoriesRes
+          : (categoriesRes.results || []);
+
+        const rawNames = rawList.map(c => (typeof c === 'object' ? c.name : c));
+        
+        const filteredNames = rawNames.filter(
+          name => name && name.toString().toLowerCase() !== 'all'
+        );
+
+        setCategories(["All", ...filteredNames]);
+      }
+    } catch (error) {
+      console.error("API Fetch Error:", error);
+    } finally {
+      const elapsedTime = Date.now() - startTime;
+      const remainingTime = Math.max(0, 1500 - elapsedTime);
+      setTimeout(() => setIsLoading(false), remainingTime);
     }
-    
-    if (fetchedCategories && fetchedCategories.length > 0) {
-      setCategories(["All", ...fetchedCategories.map(c => c.name || c)]);
-    }
-
-    const elapsedTime = Date.now() - startTime;
-    const minLoadingTime = 1500; 
-
-    const remainingTime = Math.max(0, minLoadingTime - elapsedTime);
-
-    setTimeout(() => {
-      setIsLoading(false);
-    }, remainingTime);
   };
 
   fetchData();
@@ -110,7 +125,8 @@ useEffect(() => {
 
   const theme = getTheme(themeMode, designMode);
 
-  const filteredProducts = productsData.filter((product) => {
+ const filteredProducts = Array.isArray(productsData) 
+  ? productsData.filter(product => {
     const name = product.name || product.title || "";
     const brand = product.brand || "";
     const category = product.category || "";
@@ -119,7 +135,10 @@ useEffect(() => {
                           brand.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCategory = selectedCategory === "All" || category === selectedCategory;
     return matchesSearch && matchesCategory;
-  });
+    return true; 
+    })
+  : [];
+  
 
   const getProductSize = (product) => {
     if (!product) return "M";

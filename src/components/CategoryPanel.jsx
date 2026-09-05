@@ -1,8 +1,10 @@
 import React from 'react';
 import { X } from 'lucide-react';
 
-export default function CategoryPanel({ variant, theme, categories, selectedCategory, onSelect, isOpen, onClose }) {
-  const allCategories = ["All", ...categories];
+const ALL_CATEGORY = { id: "all", name: "All" };
+
+function CategoryPanel({ variant, theme, categories, selectedCategoryId, onSelect, isOpen, onClose }) {
+  const allCategories = [ALL_CATEGORY, ...categories];
 
   if (variant === "mobile") {
     return (
@@ -18,14 +20,14 @@ export default function CategoryPanel({ variant, theme, categories, selectedCate
           <div className="flex flex-wrap gap-2 max-h-[55vh] overflow-y-auto pr-1 pb-2">
             {allCategories.map((cat, index) => (
               <button
-                key={cat}
-                onClick={() => onSelect(cat)}
+                key={cat.id}
+                onClick={() => onSelect(cat.id)}
                 style={{ transitionDelay: isOpen ? `${index * 30}ms` : '0ms' }}
                 className={`px-4 py-2 rounded-xl text-sm font-medium active:scale-95 shadow-sm transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${
-                  selectedCategory === cat ? theme.chipActive : theme.chipInactive
+                  selectedCategoryId === cat.id ? theme.chipActive : theme.chipInactive
                 } ${isOpen ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-8 scale-90'}`}
               >
-                {cat}
+                {cat.name}
               </button>
             ))}
           </div>
@@ -39,14 +41,16 @@ export default function CategoryPanel({ variant, theme, categories, selectedCate
       <div className="flex flex-wrap gap-3 justify-center">
         {allCategories.map((cat) => (
           <button
-            key={cat}
-            onClick={() => onSelect(cat)}
-            className={`px-5 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 shadow-sm ${selectedCategory === cat ? theme.chipActive : theme.chipInactive}`}
+            key={cat.id}
+            onClick={() => onSelect(cat.id)}
+            className={`px-5 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 shadow-sm ${selectedCategoryId === cat.id ? theme.chipActive : theme.chipInactive}`}
           >
-            {cat}
+            {cat.name}
           </button>
         ))}
       </div>
     </div>
   );
 }
+
+export default React.memo(CategoryPanel);

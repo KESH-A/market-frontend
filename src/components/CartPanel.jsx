@@ -1,7 +1,7 @@
 import React from 'react';
 import { ShoppingBag, X, Minus, Plus, Trash2 } from 'lucide-react';
 
-export default function CartPanel({
+function CartPanel({
   variant, theme, cartItems, totalCartCount, cartSubtotal,
   formatPrice, getCurrentImage, onUpdateQuantity, onRemove, onCheckout,
   isOpen, onClose
@@ -37,23 +37,26 @@ export default function CartPanel({
           ) : (
             cartItems.map((item) => (
               <div
-                key={`${item.id}-${item.selectedSize}`}
+                key={item.id}
                 className={`flex gap-3 p-3 ${theme.surface} rounded-2xl items-center shadow-sm ${
                   variant === "mobile" ? `transition-all duration-500 ease-out ${isOpen ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-6 scale-90'}` : ''
                 }`}
               >
-                <img src={getCurrentImage(item)} alt={item.name} className={`${variant === "mobile" ? "w-16 h-16" : "w-20 h-20"} object-cover rounded-xl bg-slate-200 shrink-0`} />
+                {item.images?.[0] ? (
+                  <img src={item.images[0]} alt={item.title} className={`${variant === "mobile" ? "w-16 h-16" : "w-20 h-20"} object-cover rounded-xl bg-slate-200 shrink-0`} />
+                ) : (
+                  <div className={`${variant === "mobile" ? "w-16 h-16" : "w-20 h-20"} rounded-xl bg-slate-200 shrink-0 flex items-center justify-center font-black text-slate-400`}>
+                    {item.title.charAt(0)}
+                  </div>
+                )}
 
                 <div className="flex-1 min-w-0">
-                  <h4 className={`font-bold text-sm truncate ${theme.textPrimary}`}>{item.name}</h4>
-                  <span className={`inline-block text-[10px] font-semibold px-2 py-0.5 rounded-md mb-1 ${theme.isDark ? 'bg-slate-800 text-slate-300' : 'bg-slate-200 text-slate-700'}`}>
-                    Size: {item.selectedSize}
-                  </span>
+                  <h4 className={`font-bold text-sm truncate ${theme.textPrimary}`}>{item.title}</h4>
                   <p className={`text-xs mb-2 font-medium ${theme.textSecondary}`}>${formatPrice(item.price)}</p>
 
                   <div className="flex items-center gap-2">
                     <button
-                      onClick={() => onUpdateQuantity(item.id, item.selectedSize, -1)}
+                      onClick={() => onUpdateQuantity(item.id, -1)}
                       aria-label="Decrease quantity"
                       className={`w-6 h-6 border ${theme.dropdownBorder} rounded-lg flex items-center justify-center active:scale-90 shadow-sm transition-transform duration-150 ${theme.isDark ? 'bg-slate-800' : 'bg-white'}`}
                     >
@@ -61,7 +64,7 @@ export default function CartPanel({
                     </button>
                     <span className={`text-xs font-bold w-4 text-center ${theme.textPrimary}`}>{item.quantity}</span>
                     <button
-                      onClick={() => onUpdateQuantity(item.id, item.selectedSize, 1)}
+                      onClick={() => onUpdateQuantity(item.id, 1)}
                       aria-label="Increase quantity"
                       className={`w-6 h-6 border ${theme.dropdownBorder} rounded-lg flex items-center justify-center active:scale-90 shadow-sm transition-transform duration-150 ${theme.isDark ? 'bg-slate-800' : 'bg-white'}`}
                     >
@@ -71,7 +74,7 @@ export default function CartPanel({
                 </div>
 
                 <button
-                  onClick={() => onRemove(item.id, item.selectedSize)}
+                  onClick={() => onRemove(item.id)}
                   aria-label="Remove item"
                   className="text-slate-400 hover:text-red-500 p-2 active:scale-90 transition-colors duration-200"
                 >
@@ -100,3 +103,5 @@ export default function CartPanel({
     </div>
   );
 }
+
+export default React.memo(CartPanel);

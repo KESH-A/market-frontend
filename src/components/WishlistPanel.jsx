@@ -1,7 +1,7 @@
 import React from 'react';
 import { Heart, X, Trash2 } from 'lucide-react';
 
-export default function WishlistPanel({
+function WishlistPanel({
   variant, theme, wishlistProducts, formatPrice, getCurrentImage,
   onMoveToCart, onRemove, isOpen, onClose
 }) {
@@ -36,15 +36,22 @@ export default function WishlistPanel({
           ) : (
             wishlistProducts.map((product) => (
               <div key={product.id} className={`flex ${variant === "mobile" ? "gap-3" : "gap-4"} p-3 ${theme.surface} rounded-2xl items-center shadow-sm`}>
-                <img src={getCurrentImage(product)} alt={product.name} className={`${variant === "mobile" ? "w-16 h-16" : "w-20 h-20"} object-cover rounded-xl bg-slate-200 shrink-0`} />
+                {getCurrentImage(product) ? (
+                  <img src={getCurrentImage(product)} alt={product.title} className={`${variant === "mobile" ? "w-16 h-16" : "w-20 h-20"} object-cover rounded-xl bg-slate-200 shrink-0`} />
+                ) : (
+                  <div className={`${variant === "mobile" ? "w-16 h-16" : "w-20 h-20"} rounded-xl bg-slate-200 shrink-0 flex items-center justify-center font-black text-slate-400`}>
+                    {product.title.charAt(0)}
+                  </div>
+                )}
                 <div className="flex-1 min-w-0">
-                  <h4 className={`font-bold text-sm truncate ${theme.textPrimary}`}>{product.name}</h4>
+                  <h4 className={`font-bold text-sm truncate ${theme.textPrimary}`}>{product.title}</h4>
                   <p className={`text-xs mb-2 font-medium ${theme.textSecondary}`}>${formatPrice(product.price)}</p>
                   <button
                     onClick={() => onMoveToCart(product)}
-                    className={`text-xs font-semibold px-3 py-1.5 rounded-xl active:scale-95 transition-transform duration-200 ${theme.primaryBtn}`}
+                    disabled={!product.inStock}
+                    className={`text-xs font-semibold px-3 py-1.5 rounded-xl active:scale-95 transition-transform duration-200 ${product.inStock ? theme.primaryBtn : `${theme.isDark ? 'bg-slate-800 text-slate-500' : 'bg-slate-100 text-slate-400'} cursor-not-allowed`}`}
                   >
-                    Move to Cart
+                    {product.inStock ? 'Move to Cart' : 'Out of Stock'}
                   </button>
                 </div>
                 <button onClick={() => onRemove(product.id)} aria-label="Remove from wishlist" className="text-slate-400 hover:text-red-500 p-2 active:scale-90 transition-colors duration-200">
@@ -58,3 +65,5 @@ export default function WishlistPanel({
     </div>
   );
 }
+
+export default React.memo(WishlistPanel);

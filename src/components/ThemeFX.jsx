@@ -1,12 +1,7 @@
 import React from 'react';
 
-export default function ThemeFX({ fxColor, fxStage, fxOrigin }) {
+function ThemeFX({ fxColor, fxStage, fxOrigin }) {
   const radius = fxStage === "cover" ? 150 : 0;
-  const transition = fxStage === "cover"
-    ? "clip-path 500ms cubic-bezier(0.55,0,1,0.45)"
-    : fxStage === "reveal"
-    ? "clip-path 600ms cubic-bezier(0,0.55,0.45,1)"
-    : "none";
 
   return (
     <>
@@ -28,14 +23,15 @@ export default function ThemeFX({ fxColor, fxStage, fxOrigin }) {
       `}</style>
 
       <div
-        className="fixed inset-0 z-[200] pointer-events-none motion-reduce:transition-none"
+        className="fixed inset-0 z-[200] pointer-events-none transition-[clip-path] duration-[550ms] ease-[cubic-bezier(0.76,0,0.24,1)] motion-reduce:transition-none"
         style={{
           backgroundColor: fxColor,
           clipPath: `circle(${radius}% at ${fxOrigin.x}px ${fxOrigin.y}px)`,
-          transition,
-          willChange: 'clip-path'
+          willChange: "clip-path"
         }}
       ></div>
     </>
   );
 }
+
+export default React.memo(ThemeFX);

@@ -1,9 +1,9 @@
 import React from 'react';
 import { X } from 'lucide-react';
 
-export default function QuickViewModal({
-  theme, isOpen, product, size, formatPrice, discount,
-  onClose, onSelectSize, onAddToCart, currentImage
+function QuickViewModal({
+  theme, isOpen, product, formatPrice, discount,
+  onClose, onAddToCart, currentImage
 }) {
   return (
     <div
@@ -24,8 +24,12 @@ export default function QuickViewModal({
           <X size={14} />
         </button>
 
-        <div className={`w-full md:w-1/2 h-48 sm:h-56 md:h-auto ${theme.isDark ? 'bg-slate-800' : 'bg-slate-100'} rounded-2xl sm:rounded-3xl overflow-hidden shadow-inner shrink-0`}>
-          <img src={currentImage} alt={product.name} className="w-full h-full object-cover" />
+        <div className={`w-full md:w-1/2 h-48 sm:h-56 md:h-auto ${theme.isDark ? 'bg-slate-800' : 'bg-slate-100'} rounded-2xl sm:rounded-3xl overflow-hidden shadow-inner shrink-0 flex items-center justify-center`}>
+          {currentImage ? (
+            <img src={currentImage} alt={product.title} className="w-full h-full object-cover" />
+          ) : (
+            <span className={`text-6xl font-black ${theme.isDark ? 'text-white/10' : 'text-black/10'}`}>{product.title.charAt(0)}</span>
+          )}
         </div>
 
         <div className="w-full md:w-1/2 flex flex-col justify-between">
@@ -34,41 +38,34 @@ export default function QuickViewModal({
               <span className={`text-xs font-bold px-3 py-1 rounded-full ${product.inStock ? 'text-lime-600 bg-lime-100' : 'text-red-500 bg-red-100'}`}>
                 {product.inStock ? 'In stock' : 'Out of stock'}
               </span>
-              <span className={`text-xs font-bold px-3 py-1 rounded-full ${theme.primaryBtn}`}>
-                -{discount}%
-              </span>
+              {discount !== null && (
+                <span className={`text-xs font-bold px-3 py-1 rounded-full ${theme.primaryBtn}`}>
+                  -{discount}%
+                </span>
+              )}
             </div>
-            <h2 className={`text-xl sm:text-2xl font-bold mb-1 ${theme.textPrimary}`}>{product.name}</h2>
+            <h2 className={`text-xl sm:text-2xl font-bold mb-1 ${theme.textPrimary}`}>{product.title}</h2>
+            <p className={`text-sm mb-1 ${theme.textMuted}`}>Sold by {product.sellerUsername || "an unknown seller"}</p>
             <p className={`text-sm mb-4 leading-relaxed ${theme.textSecondary}`}>{product.description}</p>
-
-            <div className="mb-4">
-              <span className={`text-xs font-semibold block mb-2 ${theme.textSecondary}`}>Select Size:</span>
-              <div className="flex flex-wrap gap-2">
-                {product.sizes.map((s) => (
-                  <button
-                    key={s}
-                    onClick={() => onSelectSize(s)}
-                    className={`px-3 py-1.5 text-xs font-bold rounded-xl border whitespace-nowrap transition-all duration-200 ${
-                      size === s ? `${theme.chipActive} border-transparent` : `${theme.dropdownBorder} ${theme.textSecondary} hover:bg-lime-100`
-                    }`}
-                  >
-                    {s}
-                  </button>
-                ))}
-              </div>
-            </div>
 
             <div className="flex items-baseline gap-3 mb-6">
               <span className={`text-xl sm:text-2xl font-black ${theme.textPrimary}`}>${formatPrice(product.price)}</span>
-              <span className={`text-sm line-through ${theme.textMuted}`}>${formatPrice(product.originalPrice)}</span>
             </div>
           </div>
 
-          <button onClick={onAddToCart} className={`w-full rounded-2xl flex items-center justify-center gap-2 font-medium py-3.5 active:scale-95 transition-transform duration-200 shadow-lg ${theme.primaryBtn}`}>
-            + Add to Cart
+          <button
+            onClick={onAddToCart}
+            disabled={!product.inStock}
+            className={`w-full rounded-2xl flex items-center justify-center gap-2 font-medium py-3.5 active:scale-95 transition-transform duration-200 shadow-lg ${
+              product.inStock ? theme.primaryBtn : `${theme.isDark ? 'bg-slate-800 text-slate-500' : 'bg-slate-100 text-slate-400'} cursor-not-allowed`
+            }`}
+          >
+            {product.inStock ? '+ Add to Cart' : 'Out of Stock'}
           </button>
         </div>
       </div>
     </div>
   );
 }
+
+export default React.memo(QuickViewModal);

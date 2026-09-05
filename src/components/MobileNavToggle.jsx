@@ -1,7 +1,7 @@
 import React from 'react';
 import { X } from 'lucide-react';
 
-export default function MobileNavToggle({ theme, isMobileMenuOpen, isLoaded, onToggleMain, buttons }) {
+function MobileNavToggle({ theme, isMobileMenuOpen, isLoaded, onToggleMain, buttons }) {
   return (
     <div className="md:hidden fixed top-6 right-5 z-50 flex flex-col items-end gap-3 pointer-events-none">
       <div className={`pointer-events-auto transition-transform duration-500 ease-out motion-reduce:transition-none ${isLoaded ? 'translate-x-0 rotate-0 opacity-100' : 'translate-x-32 rotate-[360deg] opacity-0'}`}>
@@ -44,3 +44,5 @@ export default function MobileNavToggle({ theme, isMobileMenuOpen, isLoaded, onT
     </div>
   );
 }
+
+export default React.memo(MobileNavToggle);

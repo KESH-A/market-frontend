@@ -3,9 +3,9 @@ import { ChevronDown, Heart, ShoppingBag, Sun, Moon, Sparkles } from 'lucide-rea
 import CategoryPanel from './CategoryPanel';
 import SearchPanel from './SearchPanel';
 
-export default function Header({
+function Header({
   theme, activeMenu, onToggleMenu, onResetFilters,
-  categories, selectedCategory, onSelectCategory,
+  categories, selectedCategoryId, onSelectCategory,
   searchQuery, onSearchChange,
   wishlistCount, cartCount,
   onThemeToggle, onDesignToggle
@@ -90,7 +90,7 @@ export default function Header({
           variant="desktop"
           theme={theme}
           categories={categories}
-          selectedCategory={selectedCategory}
+          selectedCategoryId={selectedCategoryId}
           onSelect={onSelectCategory}
           isOpen={activeMenu === 'category'}
           onClose={() => onToggleMenu(null)}
@@ -107,3 +107,5 @@ export default function Header({
     </header>
   );
 }
+
+export default React.memo(Header);
